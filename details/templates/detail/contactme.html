@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block body %}
+
+
+<p class="read" >
+Want to get in touch with me? Fill out the form below to send me a message and I will try to get back to you within 24 hours!</p>
+<div class="box box-primary box-footer">
+            <div class="box-header with-border ">
+              <h3 class="box-title">Send Me a Message</h3>
+            </div>
+            <!-- /.box-header -->
+            <!-- form start -->
+            <form  id="mailform" name="mailform" >
+              <div class="box-body">
+              {% for field in form %}
+                <div class="form-group">
+                <label for="exampleInputEmail1">{{field.label}}:</label>
+                  {{field}}
+                </div>
+                {% endfor %}
+                
+              <!-- /.box-body -->
+
+              
+              </div>
+            </form>
+            <div class="box-footer">
+                <button type="button" onclick="sent_mail();" form="mailform"  class="btn btn-primary">Submit</button>
+              </div>
+          </div>
+          <script>
+          	function sent_mail()
+          	{
+          		var $form = $('#mailform');
+          		var url = "{% url 'details:sentmail' %}";
+
+          		$.ajax(url,{
+          			data:{
+          				'name':$form.find('input[name="name"]').val(),
+          				'email_id':$form.find('input[name="email_id"]').val(),
+          				'phone_no':$form.find('input[name="phone_no"]').val(),
+          				'message': $form.find('input[name="message"]').val(),
+                  'csrfmiddlewaretoken':'{{ csrf_token }}',
+          			},
+          			type:'post',
+                success: function(json_result) {
+               // success code execution here
+               if (json_result.status == "success")
+               {
+                    alert(json_result.message)
+                    
+               }
+               else
+               {
+                    
+                    alert(json_result.message)
+               }
+            },
+            error: function(xhr,status,error) {
+               // error code here
+            },
+            complete: function(xhr,status) {
+               // completion code here
+            }
+
+          		});
+          	}
+          </script>
+
+{% endblock %}

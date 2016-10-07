@@ -1,0 +1,103 @@
+<div class="modal fade" id="comment_modal" role="dialog">
+    <div class="modal-dialog" style="width:450px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h2 class="modal-title" id="myModalLabel">Comment</h2>
+            </div>
+            <div class="modal-body" id="id_registration_form">
+                <form enctype="multipart/form-data" name="comment_form" id="comment_form">
+                {%csrf_token%}
+                {% for field in form %}
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="fieldWrapper">
+                                <label class="col-sm-3 control-label">
+                                    {{ field.label }}
+                                </label>
+                                <div class="col-sm-9">
+                                    {{ field }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br/>
+                {% endfor %}
+                </form>
+                <div id="error_box" name="error_box" class="alert alert-danger alert-dismissable" hidden="true">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    ERROR: This is to be filled in by the "print_error" function. If you see this message that means there's an error with your javascript somewhere.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button"
+                       class="btn btn-primary"
+                        form="comment_form"
+                     onclick="ajax_comment();">
+                    <i class="fa fa-check"></i> Post Comment
+                </button>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script>
+        
+        function ajax_comment()
+        {
+            var $form = $("#comment_form");
+            var url= '{% url 'posts:comment' %}';
+            var i = $("#comment_count").html();
+            i++;
+
+
+            $.ajax(url,{
+                data:{
+                    'post_id':$("#post_id").val(),
+                    'csrfmiddlewaretoken':'{{csrf_token}}',
+                    'name':$form.find('input[name="name"]').val(),
+                    'email_id':$form.find('input[name="email_id"]').val(),
+                    'comment_text':$form.find('input[name="comment_text"]').val(),
+                },
+                type:'post',
+                success: function(json_result) {
+                    if(json_result.status=="error")
+                    {
+                        alert(json_result.message)
+                    }
+                    else{
+                        $('#comment_modal').modal('hide');
+                        $('#comment').html(json_result);
+                        $('#comment_count').html(i) ;
+                    }
+                    
+            },
+            error: function(xhr,status,error) {
+               // error code here
+            },
+            complete: function(xhr,status) {
+               // completion code here
+            }
+
+            })  ;
+        }
+
+
+        function print_error(json_result)
+    {
+        $('#error_box').prop("hidden", false); // Display error box.
+        
+        // Iterate through the JSON array of arrays and generate an error string.
+        var message = "<b>Error(s):</b><hr/>";
+        var data = $.parseJSON(json_result)
+        for (var key in data) {
+            if (data.hasOwnProperty(key)) { // this will check if key is owned by data object and not by any of it's ancestors
+                message += "<p>" + key + ": " + data[key] + "<p>";
+            }
+        }
+        
+        // Replace the error string with the contents of the error box.
+        $('#error_box').html(message);
+    }
+
+    </script>

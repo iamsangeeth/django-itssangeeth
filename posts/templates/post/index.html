@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{%block body%}
+{% for post in posts %}
+
+
+
+<div class="box box-widget">
+            <div class="box-header with-border">
+              <div class="user-block">
+                <h1>{{ post.post_head }}</h1>
+                <span class="badge">Posted publicly on {{post.post_created_on}}</span>
+              </div>
+              <!-- /.user-block -->
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+
+              <p class="read" > {% autoescape off %} {{ post.post_text|linebreaksbr }}{%endautoescape%}<a href="{% url 'posts:showmore' post.post_url %}">Show More</a></p>
+              <label id="post_views">{{post.post_views}}</label>  views -
+
+             <label id="like_count">{{post.post_likes}}</label>  supports - <label id="comment_count" >{{post.comments_set.count}}</label>  comments
+              <span class="pull-right "><div class="pull-right">
+                  {% for tag in post.tagging_set.all %}
+                  <span class="label {{ tag.color_choice }}">{{tag.name_of_tag}}</span>
+                  {%endfor%}
+                    </div></span>
+            </div>
+            <!-- /.box-body -->
+            <!-- /.box-footer -->
+          </div>
+
+{% endfor %}
+{% endblock body %}

@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{%block body%}
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+          <!-- Box Comment -->
+          <div class="box box-widget">
+            <div class="box-header with-border">
+              <div class="user-block">
+                <h1>{{ post.post_head }}</h1>
+                <span class="badge">Posted publicly on {{post.post_created_on}}</span>
+              </div>
+              <!-- /.user-block -->
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+
+              <p class="read" > {% autoescape off %} {{ post.post_text|linebreaksbr }}{%endautoescape%}</p>
+              <button type="button" onclick="ajax_like();" id="like"  name="like" class="btn btn-default btn-xs" ><i class="fa fa-thumbs-o-up"></i> Support</button>
+              <span class="pull-right text-muted"><label id="like_count">{{post.post_views}}</label> views - 
+
+             <label id="like_count">{{post.post_likes}}</label>  supports - <label id="comment_count" >{{post.comments_set.count}}</label>  comments</span>
+            </div>
+            <!-- /.box-body -->
+            <div id="comment" class="box-footer box-comments">
+            {% for comment in post.comments_set.all %}
+              <div class="box-comment">
+                <div class="comment-text">
+                      <span class="username">
+                        {{comment.commented_by}}
+                        <span class="text-muted pull-right">{{comment.commented_on}}</span>
+                      </span><!-- /.username -->
+                  {{comment.comment_text}}
+                </div>
+                <!-- /.comment-text -->
+              </div>
+              <!-- /.box-comment -->
+              {% endfor %}
+              <!-- /.box-comment -->
+
+    <div class="box-comment">
+        <div class="comment-text">
+            <button class="btn btn-primary " onclick="ajax_popup_comment();" >Post Your Comment</button>
+            <span class="pull-right "><div class="pull-right">
+                  {% for tag in post.tagging_set.all %}
+                  <span class="label {{ tag.color_choice }}">{{tag.name_of_tag}}</span>
+                  {%endfor%}
+        </div>
+    </div>
+
+                </div>
+            <!-- /.box-footer -->
+          </div>
+
+          <!-- /.box -->
+        <div id="ajax_response_comment"></div>
+        <script>
+          
+          function ajax_popup_comment()
+              {
+                  var url = "{% url 'posts:comment_model' %}";
+                  
+                          
+                  $.ajax( url, {
+                      data: {
+                         'csrfmiddlewaretoken': '{{ csrf_token }}',
+                      },
+                      type: 'post',
+                      success: function(result) {
+                          // success code execution here
+                          $('#ajax_response_comment').html(result); // Update UI.
+                          $('#comment_modal').modal(); // Unhide view.
+                      },
+                      error: function(xhr,status,error) {
+                          // error code here
+                      },
+                      complete: function(xhr,status) {
+                          // completion code here
+                      }
+                  });
+              }
+
+        </script>
+<div class="text-center">
+  <div class="btn-group">
+                <a class="btn  btn-lg btn-facebook" target="_blank" href="http://www.facebook.com/sharer.php?u={{request.build_absolute_uri}}"><i class="fa fa-facebook"> Share </i></a>
+                <a class="btn btn-social-icon btn-lg btn-google-plus" target="_blank" href="https://plus.google.com/share?url={{request.build_absolute_uri}}" ><i class="fa fa-google-plus " > Share </i></a>
+                <a target="_blank" class="btn btn-social-icon btn-lg btn-twitter" href="	http://twitter.com/share?url={{request.build_absolute_uri}}&text=CHECK THIS OUT@iamsangeethms"><i class="fa fa-twitter"> Share </i></a>
+            </div>
+    </div>
+              </div>
+
+<input type="text" name="post_id" hidden="hidden" id="post_id" value="{{post.post_id}}"></input>
+<script>
+	function ajax_like()
+	{
+	    var url = "{% url 'posts:support' %}";
+
+	    $.ajax(url,{
+	        data:{
+	            'post_id':$("#post_id").val(),
+	            'csrfmiddlewaretoken':'{{csrf_token}}',
+	            'liked':'1',
+	        },
+	        type:'post',
+	        success: function(json_result) {
+            // success code execution here
+               if (json_result.status == "success")
+               {
+                    $('#like_count').html(json_result.data);
+               }
+               else
+               {
+                    alert(json_result.message);
+               }
+            },
+            error: function(xhr,status,error) {
+               // error code here
+            },
+            complete: function(xhr,status) {
+               // completion code here
+            }
+	    });
+	}
+</script>
+
+{% endblock %}

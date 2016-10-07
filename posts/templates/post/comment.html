@@ -1,0 +1,13 @@
+{% for comment in post.comments_set.all %}
+              <div class="box-comment">
+                <div class="comment-text">
+                      <span class="username">
+                        {{comment.commented_by}}
+                        <span class="text-muted pull-right">{{comment.commented_on}}</span>
+                      </span><!-- /.username -->
+                  {{comment.comment_text}}
+                </div>
+                <!-- /.comment-text -->
+              </div>
+              <!-- /.box-comment -->
+              {% endfor %}
