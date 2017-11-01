@@ -6,7 +6,7 @@ from .models import Posts, Comments, Tagging
 
 
 class PostText(admin.ModelAdmin):
-	fields = ['post_head','post_text']
+	fields = ['post_head','post_text','post_likes']
 	list_display = ('post_head','post_created_on')
 	formfield_overrides={
 		models.CharField:{'widget':TextInput(attrs={'size':'20'})},

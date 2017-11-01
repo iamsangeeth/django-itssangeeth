@@ -16,7 +16,7 @@
 
               <p class="read" > {% autoescape off %} {{ post.post_text|linebreaksbr }}{%endautoescape%}</p>
               <button type="button" onclick="ajax_like();" id="like"  name="like" class="btn btn-default btn-xs" ><i class="fa fa-thumbs-o-up"></i> Support</button>
-              <span class="pull-right text-muted"><label id="post_view">{{post.post_views}}</label> views - 
+              <span class="pull-right text-muted"><label id="view_count">{{post.post_views}}</label> views - 
 
              <label id="like_count">{{post.post_likes}}</label>  supports - <label id="comment_count" >{{post.comments_set.count}}</label>  comments</span>
             </div>

@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponse
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 from .models import Messages
 import json
 from .forms import ContactMe
@@ -28,6 +28,8 @@ def sentmail(request):
 				message=message,
 				)
 			msg.save()
+			mail = EmailMessage('THANK YOU '+name,'hi, this is an automated reply thanking you. I will consider your message and will defenitely cosider the same for my future posts',to=[email_id])
+			mail.send()
 			response_data={'status':'success','message':'message sent'}
 		else:
 			response_data={'status':'error','message':'not sent'}

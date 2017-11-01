@@ -4,7 +4,7 @@ from .models import Messages
 
 
 class MessageText(admin.ModelAdmin):
-    fields = ['name','message','time_sent']
-    list_display = ['name','message','time_sent']
+    fields = ['name','message','time_sent','email_id']
+    list_display = ['name','message','time_sent','email_id']
 
 admin.site.register(Messages, MessageText)
